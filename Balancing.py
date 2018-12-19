@@ -184,8 +184,8 @@ def kbhit():
 #kd = 10.0
 
 kp = 1600.0
-ki = 600.0
-kd = 100.0
+ki = 3600.0
+kd = 50.0
 
 #ki = 750.0
 #kd = 5.0
@@ -201,9 +201,7 @@ error_prov = 0.0
 
 output = 0.0
 
-
-
-
+goal_slope = 10.5
 
 if __name__ == '__main__':
     atexit.register(set_normal_term)
@@ -216,111 +214,16 @@ try :
             ch = getch()
             print ch
 
-            if ch == 's' or ch == 'S' :
-                accel_xout = read_word_2c(0x3b)
-                accel_yout = read_word_2c(0x3d)
-                accel_zout = read_word_2c(0x3f)
-
-                accel_xout_scaled = accel_xout / 16384.0
-                accel_yout_scaled = accel_yout / 16384.0
-                accel_zout_scaled = accel_zout / 16384.0
-
-
-
-            	x_slope = get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-                y_slope = get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-
-            	error = -10.0 - y_slope
-
-                P_term = kp * error
-                I_term += ki * error * dT
-                D_term = kd * (error - error_prov) / dT
-
-                error_prov = error
-
-
-                if I_term > 1000:
-                    I_term = 1000
-                elif I_term < -1000:
-                    I_term = -1000
-
-                output = P_term + I_term + D_term
-
-
-                speed = output
-
-
-                if speed > 0.000:
-
-                    if speed > 10000:
-                        speed = 10000
-                    speed /= 100
-                    setMotor(CH1, int(speed), FORWARD)
-                    setMotor(CH2, int(speed), FORWARD)
-                elif speed < 0.0000:
-                    if speed < -10000:
-                        speed = -10000
-
-                    speed /= 100
-                    setMotor(CH1, int(-1 * speed), BACKWORD)
-                    setMotor(CH2, int(-1 * speed), BACKWORD)
-                else:
-                	setMotor(CH1, 0, STOP)
-                	setMotor(CH2, 0, STOP)
-
-
-            elif ch == 'w'or ch == 'W':
-                accel_xout = read_word_2c(0x3b)
-                accel_yout = read_word_2c(0x3d)
-                accel_zout = read_word_2c(0x3f)
-
-                accel_xout_scaled = accel_xout / 16384.0
-                accel_yout_scaled = accel_yout / 16384.0
-                accel_zout_scaled = accel_zout / 16384.0
-
-
-
-            	x_slope = get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-                y_slope = get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-
-            	error = -10.0 - y_slope
-
-                P_term = kp * error
-                I_term += ki * error * dT
-                D_term = kd * (error - error_prov) / dT
-
-                error_prov = error
-
-
-                if I_term > 1000:
-                    I_term = 1000
-                elif I_term < -1000:
-                    I_term = -1000
-
-                output = P_term + I_term + D_term
-
-
-                speed = output
-
-
-                if speed > 0.000:
-
-                    if speed > 10000:
-                        speed = 10000
-                    speed /= 100
-                    setMotor(CH1, int(speed), FORWARD)
-                    setMotor(CH2, int(speed), FORWARD)
-                elif speed < 0.0000:
-                    if speed < -10000:
-                        speed = -10000
-
-                    speed /= 100
-                    setMotor(CH1, int(-1 * speed), BACKWORD)
-                    setMotor(CH2, int(-1 * speed), BACKWORD)
-                else:
-                	setMotor(CH1, 0, STOP)
-                	setMotor(CH2, 0, STOP)
-
+            if ch == 'w' or ch == 'W' :
+		        goal_slope = 27.0
+                #setMotor(CH1, int(60), FORWARD)
+                #setMotor(CH2, int(60), FORWARD)
+		#sleep(0.3)
+            elif ch == 's'or ch == 'S':
+                setMotor(CH1, int(50), FORWARD)
+                setMotor(CH2, int(50), FORWARD)
+		        sleep(0.4)
+		#goal_slope = -7.0
             elif ch == 'a' or ch == 'A':
                 setMotor(CH1, int(100), FORWARD)
                 setMotor(CH2, int(100), BACKWORD)
@@ -329,65 +232,74 @@ try :
                 setMotor(CH1, int(100), BACKWORD)
                 setMotor(CH2, int(100), FORWARD)
 		        sleep(0.2)
+	        elif ch == 'e' or ch == 'E':
+		         goal_slope = 7.5
 
-        P_term = 0.0
-	    I_term = 0.0
-	    D_term = 0.0
+		P_term = 0.0
+		I_term = 0.0
+		D_term = 0.0
 	else :
 		accel_xout = read_word_2c(0x3b)
-        accel_yout = read_word_2c(0x3d)
-        accel_zout = read_word_2c(0x3f)
+        	accel_yout = read_word_2c(0x3d)
+        	accel_zout = read_word_2c(0x3f)
 
-        accel_xout_scaled = accel_xout / 16384.0
-        accel_yout_scaled = accel_yout / 16384.0
-        accel_zout_scaled = accel_zout / 16384.0
+        	accel_xout_scaled = accel_xout / 16384.0
+        	accel_yout_scaled = accel_yout / 16384.0
+        	accel_zout_scaled = accel_zout / 16384.0
 
-
+        	#print "accel_xout: ", accel_xout, " scaled: ", accel_xout_scaled
+        	#print "accel_yout: ", accel_yout, " scaled: ", accel_yout_scaled
+        	#print "accel_zout: ", accel_zout, " scaled: ", accel_zout_scaled
 
 	 	x_slope = get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-        y_slope = get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+        	y_slope = get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
 
-		error = 6.5 - y_slope
+        	#print "x rotation: ", x_slope
 
-        P_term = kp * error
-        I_term += ki * error * dT
-        D_term = kd * (error - error_prov) / dT
+       		#print "y rotation: ", y_slope
 
-        error_prov = error
+        	#print "----------------------------------------"
+		error = goal_slope - y_slope
+
+        	P_term = kp * error
+        	I_term += ki * error * dT
+        	D_term = kd * (error - error_prov) / dT
+
+        	error_prov = error
 
         	#print "I_term : ", I_term
 
-        if I_term > 1000:
-            I_term = 1000
-        elif I_term < -1000:
-            I_term = -1000
+        	if I_term > 1000:
+                	I_term = 1000
+        	elif I_term < -1000:
+                	I_term = -1000
 
-        output = P_term + I_term + D_term
-
-
-       	speed = output
+        	output = P_term + I_term + D_term
 
 
-        print "P : ", P_term
+       	 	speed = output
 
-        print "speed : ", speed / 100
+
+        	#print "P : ", P_term
+
+        	#print "speed : ", speed / 100
 		if speed > 0.000:
 
-            if speed > 10000:
-                speed = 10000
-            speed /= 100
-            setMotor(CH1, int(speed), FORWARD)
-            setMotor(CH2, int(speed), FORWARD)
+            		if speed > 10000:
+                		speed = 10000
+            		speed /= 100
+            		setMotor(CH1, int(speed), FORWARD)
+            		setMotor(CH2, int(speed), FORWARD)
         	elif speed < 0.0000:
-            	if speed < -10000:
-                	speed = -10000
+            		if speed < -10000:
+                		speed = -10000
 
-            	speed /= 100
-            	setMotor(CH1, int(-1 * speed), BACKWORD)
-            	setMotor(CH2, int(-1 * speed), BACKWORD)
+            		speed /= 100
+            		setMotor(CH1, int(-1 * speed), BACKWORD)
+            		setMotor(CH2, int(-1 * speed), BACKWORD)
         	else:
-            	setMotor(CH1, 0, STOP)
-            	setMotor(CH2, 0, STOP)
+            		setMotor(CH1, 0, STOP)
+            		setMotor(CH2, 0, STOP)
 
 
         #sys.stdout.write('balancing')
